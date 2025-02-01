@@ -1,0 +1,20 @@
+name: scratch
+on:
+  workflow_dispatch:
+  push:
+    branches: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: env | sort
+      - run: git rev-parse --short HEAD
+      #- shell: python
+      #  run: |
+      #    import os
+      #    for key, value in os.environ.items():
+      #      print(f"{key}={value}")
+      #- run: echo ${{ secrets.REGISTRY_PASS }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin
+      #- run: docker logout

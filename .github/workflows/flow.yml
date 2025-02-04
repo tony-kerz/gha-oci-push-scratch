@@ -42,7 +42,7 @@ jobs:
             -v $(pwd):$(pwd) -w $(pwd) \
             -v ${_cfg}:${_cfg} -e CONFIGR_YAML=${_cfg} \
             -v ${sock}:${sock} \
-            -e DEBUG=dbg:*
+            -e DEBUG=dbg:* \
             ${image}
 
       # docker logout to clean up creds for safe measure

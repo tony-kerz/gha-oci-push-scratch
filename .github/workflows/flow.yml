@@ -1,20 +1,47 @@
-name: scratch
+name: flow
 on:
   workflow_dispatch:
   push:
     branches: main
+
+env:
+  VOLUMES: -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}:${HOME}
+  ENV: -e HOME:${HOME}
+  CONFIG: configr.yaml
+  IMAGE: tonykerz/containr-oci-push-scratch:1.1.1
+  # docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp -u $(npm run -s user) -v $(npm run -s cfg):$(npm run -s cfg) -v $(pwd):$(pwd) -e CONFIGR_YAML=$(npm run -s cfg) -e DEBUG=dbg:* -e HOME=${HOME} -w $(pwd) $(npm run -s tag)
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: env | sort
-      - run: git rev-parse --short HEAD
-      #- shell: python
-      #  run: |
-      #    import os
-      #    for key, value in os.environ.items():
-      #      print(f"{key}={value}")
+      #
+      # required if image to b run resides in private registry
+      #
       #- run: echo ${{ secrets.REGISTRY_PASS }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin
+      #
+      # in this case, the image to be run will be wanting to push an oci image to a registry
+      # assuming anonymous push will not be supported, so creds required for this
+      #
+      # note: creds to pull pusher image and creds to push image could potentially be different
+      # but this example assumes that the pull and push occur from the same registry
+      #
+      # these commands are good candidates to place in a reusable workflow to facilitate the pattern
+      #
+
+      # login to setup creds for push, this will place creds in ~/.docker/config.json
+      #
+      #- run: echo ${{ secrets.REGISTRY_PASS }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin
+
+      - run: echo "volumes=${VOLUMES}"
+
+      # run container with oci push logic
+      #
+      #- run: |
+      #    cfg=$(pwd)/${CFG}
+      #    docker run --rm -u $(id -u) -v $(pwd):$(pwd) -v ${cfg}:${cfg} -e CONFIGR_YAML=${cfg} ${VOLUMES} ${ENV} ${IMAGE}
+
+      # docker logout to clean up creds for safe measure
+      #
       #- run: docker logout

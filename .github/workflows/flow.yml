@@ -33,6 +33,10 @@ jobs:
       #
       - run: echo ${{ secrets.REGISTRY_PASS }} | docker login -u ${{ vars.REGISTRY_USER }} --password-stdin
 
+      # required for called container to use docker
+      #
+      - run: sudo chmod o+rw ${sock}
+
       # run container with oci push logic
       #
       - run: |

@@ -9,7 +9,7 @@ env:
   #
   sock: /var/run/docker.sock
   cfg: configr.yaml
-  image: tonykerz/containr-oci-push-scratch:1.1.1
+  image: tonykerz/containr-oci-push-scratch:1.1.2
   # docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp -u $(npm run -s user) -v $(npm run -s cfg):$(npm run -s cfg) -v $(pwd):$(pwd) -e CONFIGR_YAML=$(npm run -s cfg) -e DEBUG=dbg:* -e HOME=${HOME} -w $(pwd) $(npm run -s tag)
 
 jobs:

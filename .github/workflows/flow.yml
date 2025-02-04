@@ -5,10 +5,11 @@ on:
     branches: main
 
 env:
-  VOLUMES: -v /var/run/docker.sock:/var/run/docker.sock -v ${HOME}:${HOME}
-  ENV: -e HOME:${HOME}
-  CONFIG: configr.yaml
-  IMAGE: tonykerz/containr-oci-push-scratch:1.1.1
+  # note: can only store static values here
+  #
+  sock: /var/run/docker.sock
+  cfg: configr.yaml
+  image: tonykerz/containr-oci-push-scratch:1.1.1
   # docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp -u $(npm run -s user) -v $(npm run -s cfg):$(npm run -s cfg) -v $(pwd):$(pwd) -e CONFIGR_YAML=$(npm run -s cfg) -e DEBUG=dbg:* -e HOME=${HOME} -w $(pwd) $(npm run -s tag)
 
 jobs:
@@ -17,31 +18,33 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       #
-      # required if image to b run resides in private registry
-      #
-      #- run: echo ${{ secrets.REGISTRY_PASS }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin
-      #
       # in this case, the image to be run will be wanting to push an oci image to a registry
       # assuming anonymous push will not be supported, so creds required for this
       #
-      # note: creds to pull pusher image and creds to push image could potentially be different
-      # but this example assumes that the pull and push occur from the same registry
+      # note: in this case, image to b run is in a public registry, so no creds required for pull,
+      # but if image to b run is in private registry, then creds would b needed for the pull and they
+      # may or may not be the same creds required for the push
       #
       # these commands are good candidates to place in a reusable workflow to facilitate the pattern
       #
 
       # login to setup creds for push, this will place creds in ~/.docker/config.json
+      # so will need to share via volume to running container...
       #
-      #- run: echo ${{ secrets.REGISTRY_PASS }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin
-
-      - run: echo "volumes=${VOLUMES}"
+      - run: echo ${{ secrets.REGISTRY_PASS }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin
 
       # run container with oci push logic
       #
-      #- run: |
-      #    cfg=$(pwd)/${CFG}
-      #    docker run --rm -u $(id -u) -v $(pwd):$(pwd) -v ${cfg}:${cfg} -e CONFIGR_YAML=${cfg} ${VOLUMES} ${ENV} ${IMAGE}
+      - run: |
+          _cfg=$(pwd)/${cfg}
+          docker run --rm \
+            -u $(id -u) -e HOME=${HOME}\
+            -v $(pwd):$(pwd) -w $(pwd) \
+            -v ${_cfg}:${_cfg} -e CONFIGR_YAML=${_cfg} \
+            -v ${sock}:${sock} \
+            -e DEBUG=dbg:*
+            ${image}
 
       # docker logout to clean up creds for safe measure
       #
-      #- run: docker logout
+      - run: docker logout

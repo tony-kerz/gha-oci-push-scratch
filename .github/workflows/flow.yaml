@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: the-watchmen/gha-containr-call@main
+      - uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
         with:
           config: configr.yaml
           image: tonykerz/containr-oci-push-scratch:1.1.2

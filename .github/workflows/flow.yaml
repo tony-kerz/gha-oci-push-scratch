@@ -1,24 +1,22 @@
 name: flow
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        type: environment
-        description: environment
+    #inputs:
+    #  environment:
+    #    type: environment
+    #    description: environment
   push:
     branches: main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
-        with:
-          config: configr.yaml
-          image: tonykerz/containr-oci-push-scratch:1.1.2
-          # creds could be required for pull, but in this case pull is public
-          # in this case creds, rrequired for push...
-          #
-          registry-user: ${{ vars.REGISTRY_USER }}
-          registry-pass: ${{ secrets.REGISTRY_PASS}}
+  containr:
+    uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
+    with:
+      config: configr.yaml
+      image: tonykerz/containr-oci-push-scratch:1.1.2
+      # creds could be required for pull, but in this case pull is public
+      # in this case creds, rrequired for push...
+      #
+      registry-user: ${{ vars.REGISTRY_USER }}
+    secrets:
+      registry-pass: ${{ secrets.REGISTRY_PASS}}

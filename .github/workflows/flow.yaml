@@ -1,22 +1,35 @@
 name: flow
 on:
   workflow_dispatch:
-    #inputs:
-    #  environment:
-    #    type: environment
-    #cd     description: environment
+    inputs:
+      environment:
+        type: environment
+        description: environment
   push:
     branches: main
 
 jobs:
+  init:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/orgs/community/discussions/26529#discussioncomment-9051914
+      #
+      - run: echo "GITHUB_OUTPUT=${GITHUB_OUTPUT}" >> "$GITHUB_OUTPUT"
+        id: hack
   containr:
     uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
     with:
       config: configr.yaml
-      image: tonykerz/containr-oci-push-scratch:1.1.2
+      image: tonykerz/containr-oci-push-scratch:1.1.3
       # creds could be required for pull, but in this case pull is public
-      # in this case creds, rrequired for push...
+      # in this case creds required for push...
       #
       registry-user: ${{ vars.REGISTRY_USER }}
+      output: ${{ needs.init.output.hack.GITHUB_OUTPUT }}
     secrets:
       registry-pass: ${{ secrets.REGISTRY_PASS}}
+  other:
+    runs-on: ubuntu-latest
+    needs: containr
+    steps:
+      - run: cat ${GITHUB_OUTPUT}

@@ -16,6 +16,12 @@ jobs:
       #
       - run: echo "GITHUB_OUTPUT=${GITHUB_OUTPUT}" >> "$GITHUB_OUTPUT"
         id: hack
+      - run: echo ${{ steps.hack.outputs.GITHUB_OUTPUT }}
+      - run: echo ${HOME}
+      - run: |
+          echo 'srsly' > foo.txt
+          cat foo.txt
+      - run: echo ${GITHUB_OUTPUT}
       - run: cat ${GITHUB_OUTPUT}
   containr:
     needs: init
@@ -27,7 +33,7 @@ jobs:
       # in this case creds required for push...
       #
       registry-user: ${{ vars.REGISTRY_USER }}
-      output: ${{ needs.init.outputs.hack.GITHUB_OUTPUT }}
+      output: ${{ needs.init.steps.hack.outputs.GITHUB_OUTPUT }}
     secrets:
       registry-pass: ${{ secrets.REGISTRY_PASS}}
   other:

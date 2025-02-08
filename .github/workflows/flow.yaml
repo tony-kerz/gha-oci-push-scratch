@@ -14,14 +14,11 @@ jobs:
     steps:
       # https://github.com/orgs/community/discussions/26529#discussioncomment-9051914
       #
+      - run: echo ${GITHUB_OUTPUT}
+      - run: echo "K1=V1" >> "$GITHUB_OUTPUT"
       - run: echo "GITHUB_OUTPUT=${GITHUB_OUTPUT}" >> "$GITHUB_OUTPUT"
         id: hack
-      - run: echo ${{ steps.hack.outputs.GITHUB_OUTPUT }}
-      - run: echo ${HOME}
-      - run: |
-          echo 'srsly' > foo.txt
-          cat foo.txt
-      - run: echo ${GITHUB_OUTPUT}
+      - run: echo gho=${{ steps.hack.outputs.GITHUB_OUTPUT }}
       - run: cat ${GITHUB_OUTPUT}
   containr:
     needs: init
@@ -40,4 +37,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: containr
     steps:
+      - run: echo ${GITHUB_OUTPUT}
       - run: cat ${GITHUB_OUTPUT}
+      - run: echo gho=${{ steps.hack.outputs.GITHUB_OUTPUT }}

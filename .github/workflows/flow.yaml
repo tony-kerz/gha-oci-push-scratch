@@ -16,7 +16,9 @@ jobs:
       #
       - run: echo "GITHUB_OUTPUT=${GITHUB_OUTPUT}" >> "$GITHUB_OUTPUT"
         id: hack
+      - run: cat ${GITHUB_OUTPUT}
   containr:
+    needs: init
     uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
     with:
       config: configr.yaml
@@ -25,7 +27,7 @@ jobs:
       # in this case creds required for push...
       #
       registry-user: ${{ vars.REGISTRY_USER }}
-      output: ${{ needs.init.output.hack.GITHUB_OUTPUT }}
+      output: ${{ needs.init.outputs.hack.GITHUB_OUTPUT }}
     secrets:
       registry-pass: ${{ secrets.REGISTRY_PASS}}
   other:

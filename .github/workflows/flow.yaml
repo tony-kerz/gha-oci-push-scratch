@@ -25,3 +25,5 @@ jobs:
     needs: containr
     steps:
       - run: echo json=${{ needs.containr.outputs.json }}
+      - run: which jq
+      - run: echo name=${{ fromJSON(needs.containr.outputs.json).name }}

@@ -9,21 +9,33 @@ on:
     branches: main
 
 jobs:
-  containr:
+  push:
     uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
     with:
       config: configr.yaml
-      image: tonykerz/containr-oci-push-scratch:1.1.5
+      image: tonykerz/containr-oci-push-scratch:1.2.0
       # creds could be required for pull, but in this case pull is public
       # in this case creds required for push...
       #
       registry-user: ${{ vars.REGISTRY_USER }}
     secrets:
       registry-pass: ${{ secrets.REGISTRY_PASS}}
-  next:
+  check:
     runs-on: ubuntu-latest
-    needs: containr
+    needs: push
     steps:
-      - run: echo json=${{ needs.containr.outputs.json }}
-      - run: echo jq-name=$(echo '${{ needs.containr.outputs.json }}' | jq .image.name)
-      - run: echo from-json-name=${{ fromJSON(needs.containr.outputs.json).image.name }}
+      - run: echo json=${{ needs.push.outputs.json }}
+      # - run: echo jq-name=$(echo '${{ needs.push.outputs.json }}' | jq .image.name)
+      - run: echo from-json-name=${{ fromJSON(needs.push.outputs.json).image.name }}
+  pull:
+    uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
+    with:
+      config: '{"ociImage": "${{ fromJSON(needs.push.outputs.json).image.name }}"}'
+      config-format: json
+      image: tonykerz/containr-oci-pull-scratch:1.2.0
+      # creds could be required for pull, but in this case pull is public
+      # in this case creds required for push...
+      #
+      #registry-user: ${{ vars.REGISTRY_USER }}
+    #secrets:
+    #registry-pass: ${{ secrets.REGISTRY_PASS}}

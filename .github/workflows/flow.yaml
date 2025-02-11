@@ -28,6 +28,7 @@ jobs:
       # - run: echo jq-name=$(echo '${{ needs.push.outputs.json }}' | jq .image.name)
       - run: echo from-json-name=${{ fromJSON(needs.push.outputs.json).image.name }}
   pull:
+    needs: push
     uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
     with:
       config: '{"ociImage": "${{ fromJSON(needs.push.outputs.json).image.name }}"}'

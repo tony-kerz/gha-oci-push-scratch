@@ -27,15 +27,28 @@ jobs:
       - run: echo json=${{ needs.push.outputs.json }}
       # - run: echo jq-name=$(echo '${{ needs.push.outputs.json }}' | jq .image.name)
       - run: echo from-json-name=${{ fromJSON(needs.push.outputs.json).image.name }}
+  setup:
+    runs-on: ubuntu-latest
+    needs: push
+    steps:
+      - id: config
+        # https://stackoverflow.com/a/68383110
+        #
+        run: |
+          img=${{ fromJSON(needs.push.outputs.json).image.name }}
+          # https://stackoverflow.com/a/48470227
+          #
+          json=$(jq -n --arg _img ${img} '{ociImage: $_img}')
+          echo "::set-output name=val::${json}"
   pull:
     needs: push
     uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
     with:
-      config: '{"ociImage": "${{ fromJSON(needs.push.outputs.json).image.name }}"}'
+      # config: '{"ociImage": "${{ fromJSON(needs.push.outputs.json).image.name }}"}'
+      config: ${{ needs.jobs.setup.steps.config.outputs.val }}
       config-format: json
       image: tonykerz/containr-oci-pull-scratch:1.2.0
       # creds could be required for pull, but in this case pull is public
-      # in this case creds required for push...
       #
       #registry-user: ${{ vars.REGISTRY_USER }}
     #secrets:

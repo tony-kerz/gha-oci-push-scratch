@@ -20,13 +20,13 @@ jobs:
       registry-user: ${{ vars.REGISTRY_USER }}
     secrets:
       registry-pass: ${{ secrets.REGISTRY_PASS}}
-  check:
-    runs-on: ubuntu-latest
-    needs: push
-    steps:
-      - run: echo json=${{ needs.push.outputs.json }}
-      # - run: echo jq-name=$(echo '${{ needs.push.outputs.json }}' | jq .image.name)
-      - run: echo from-json-name=${{ fromJSON(needs.push.outputs.json).image.name }}
+  # check:
+  #   runs-on: ubuntu-latest
+  #   needs: push
+  #   steps:
+  #     - run: echo json=${{ needs.push.outputs.json }}
+  #     - run: echo jq-name=$(echo '${{ needs.push.outputs.json }}' | jq .image.name)
+  #     - run: echo from-json-name=${{ fromJSON(needs.push.outputs.json).image.name }}
   setup:
     runs-on: ubuntu-latest
     needs: push
@@ -48,7 +48,6 @@ jobs:
     needs: setup
     uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
     with:
-      # config: '{"ociImage": "${{ fromJSON(needs.push.outputs.json).image.name }}"}'
       config: ${{ needs.setup.outputs.config }}
       config-format: json
       image: tonykerz/containr-oci-pull-scratch:1.2.0

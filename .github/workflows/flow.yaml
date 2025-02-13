@@ -41,8 +41,13 @@ jobs:
           json=$(jq -cn --arg _img ${img} '{ociImage: $_img}')
           echo json="${json}"
           echo "val=${json}" >> $GITHUB_OUTPUT
-  pull:
+  test:
+    runs-on: ubuntu-latest
     needs: setup
+    steps:
+      - run: echo ${{ needs.jobs.setup.steps.config.outputs.val }}
+  pull:
+    needs: test
     uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
     with:
       # config: '{"ociImage": "${{ fromJSON(needs.push.outputs.json).image.name }}"}'

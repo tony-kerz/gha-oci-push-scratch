@@ -39,9 +39,9 @@ jobs:
           # https://stackoverflow.com/a/48470227
           #
           json=$(jq -n --arg _img ${img} '{ociImage: $_img}')
-          echo "::set-output name=val::${json}"
+          echo "val=${json}" >> ${GITHUB_OUTPUT}
   pull:
-    needs: push
+    needs: setup
     uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
     with:
       # config: '{"ociImage": "${{ fromJSON(needs.push.outputs.json).image.name }}"}'

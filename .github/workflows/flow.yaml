@@ -50,7 +50,7 @@ jobs:
     with:
       config: ${{ needs.setup.outputs.config }}
       config-format: json
-      image: tonykerz/containr-oci-pull-scratch:1.2.5
+      image: tonykerz/containr-oci-pull-scratch:1.2.6
       # creds could be required for pull, but in this case pull is public
       #
       #registry-user: ${{ vars.REGISTRY_USER }}

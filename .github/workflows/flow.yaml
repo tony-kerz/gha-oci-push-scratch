@@ -41,6 +41,7 @@ jobs:
           json=$(jq -cn --arg _img ${img} '{ociImage: $_img}')
           echo json="${json}"
           echo "val=${json}" >> $GITHUB_OUTPUT
+      - run: ls -laR /tmp
     outputs:
       config: ${{ steps.config.outputs.val }}
   pull:

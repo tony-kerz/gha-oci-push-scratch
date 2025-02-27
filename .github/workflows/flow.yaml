@@ -13,7 +13,7 @@ jobs:
     uses: the-watchmen/gha-containr-call/.github/workflows/flow.yaml@main
     with:
       config: configr.yaml
-      image: tonykerz/containr-oci-push-scratch:1.2.4
+      image: tonykerz/containr-oci-push-scratch:1.2.5
       # creds could be required for pull, but in this case pull is public
       # in this case creds required for push...
       #

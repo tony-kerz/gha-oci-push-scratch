@@ -54,6 +54,11 @@ jobs:
       # using latest for now, but after stabilization, may want specify discret version for idempotency
       #
       image: tonykerz/containr-oci-pull-scratch
+      #
+      # this will trigger slightly different handling of work folder
+      #
+      is-checkout: false
+      #
       # creds could be required for pull, but in this case pull is public
       #
       #registry-user: ${{ vars.REGISTRY_USER }}
